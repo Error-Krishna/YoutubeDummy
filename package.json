@@ -1,0 +1,24 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "This is project to learn and pracitce backend (a youtube like application with similar features)",
+  "homepage": "https://github.com/Error-Krishna/YoutubeDummy#readme",
+  "bugs": {
+    "url": "https://github.com/Error-Krishna/YoutubeDummy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Error-Krishna/YoutubeDummy.git"
+  },
+  "license": "ISC",
+  "author": "Krishna Goyal",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "modemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
