@@ -4,16 +4,18 @@ import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 
 dotenv.config({
-    path: './env'
+    path: './.env'
 })
+const port = process.env.PORT || 8000;
 
 connectDB()
+//  start the server after connecting the database, why? -> dont let the application accept the traffic with the availaility of the database
 .then(() => {
     try {
-        app.listen(process.env.PORT || 8000, () =>
-        console.log(`Server is running at port: ${process.env.PORT}`));
+        const server = app.listen(port, () =>{
+        console.log(`Server is running at port: ${port}`)});
     } catch {
-        app.on("error", (error) => {
+        server.on("error", (error) => {
             console.log("ERROR IN SERVER INITIALIZATON", error);
             throw error;
         })

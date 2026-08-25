@@ -1,13 +1,13 @@
-import express from express
+import express from "express"
 import cors from "cors"
 import cookieparser from "cookie-parser"
 
 
-const app = express();
+const app = express(); // express() is a function and calling it creates an Express Application object
 app.use(cors({
-    orgin: process.env.CORS_ORIGIN,
-    credentials: true,
-})) // "use" is used to access all the middlewares
+    origin: process.env.CORS_ORIGIN,
+    // credentials: true,
+}))
 
 app.use(express.json({
     limit:"16kb"
