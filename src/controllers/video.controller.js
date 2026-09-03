@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
@@ -34,7 +34,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
     // 4. Receive uploaded files
     const videoFile = req.files?.videoFile?.[0];
     const thumbnailFile = req.files?.thumbnail?.[0];
-
+    console.log("VideoFIle: ", videoFile);
+    console.log("thumbnailFIle: ", thumbnailFile);
+    
     // 5. Validate files exist
     if (!videoFile || !thumbnailFile) {
         throw new apiError(
@@ -99,7 +101,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
         // 9. Create database document
         const video = await Video.create({
             videoFile: videoUploadResult.url,
+            videoPublicId: videoUploadResult.public_id,
             thumbnail: thumbnailUploadResult.url,
+            thumbnailPublicId: thumbnailUploadResult.public_id,
             title: trimmedTitle,
             description: trimmedDescription,
             duration: videoUploadResult.duration,
@@ -155,7 +159,6 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw error;
     }
 });
-
 const getVideoById = asyncHandler(async (req, res) => {
 
 });
@@ -163,36 +166,73 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 });
 const deleteVideo = asyncHandler(async (req, res) => {
-// try {
-//     // Authenticate user
-//     const user = await User.findById(req.user._id);
-//     // Validate User
-//     if(!user){
-//         throw new apiError(404, "User not found");
-//     }
-//     // Recieve videoID from user
-//     const {videoId} = req.params;
-//     // validate id
-//     if(!mongoose.Types.ObjectId.isValid(videoId)){
-//         throw new apiError(400, "Invalid video ID")
-//     }
-//     // find video by id
-//     const videoObject = await Video.findById(videoId);
+    // Authenticate user
+    const user = await User.findById(req.user._id);
+    // Validate User
+    if(!user){
+        throw new apiError(404, "User not found");
+    }
+    // Recieve videoID from user
+    const {videoId} = req.params;
+    // validate id
+    if(!mongoose.Types.ObjectId.isValid(videoId)){
+        throw new apiError(400, "Invalid video ID")
+    }
+    // find video by id
+    const videoObject = await Video.findById(videoId);
 
-//     if(!videoObject){
-//         throw new apiError(404, "video not found")
-//     }
-//     // verify if the authenticated user owns the video
-//     if(user.ObjectId != video.ObjectId){
-//         throw new apiError(404, "user doesnot owns the video")
-//     }
-//     // remove video and related data from db
-//     // clean up the cloudinary
-//     // return sucess message
+    if(!videoObject){
+        throw new apiError(404, "video not found")
+    }
+    // verify if the authenticated user owns the video
+    if(user._id.toString() !== videoObject.owner.toString()){
+        throw new apiError(403, "user doesnot owns the video")
+    }
+    // remove video and related data from db
+    const deletedVideo = await Video.findByIdAndDelete(videoId);
+    if(!deletedVideo){
+        throw new apiError(500, "Failed to Deleted video")
+    }
+    // clean up the cloudinary
+    if (deletedVideo.videoPublicId) {
+        try {
+            await deleteFromCloudinary(
+                deletedVideo.videoPublicId,
+                "video"
+            );
+        } catch (cleanupError) {
+            console.error(
+                "Failed to cleanup video:",
+                cleanupError
+            );
+        }
+    }
+
+    if(deletedVideo.thumbnailPublicId){
+        try {
+            await deleteFromCloudinary(
+                deleteVideo.thumbnailPublicId,
+                "image"
+            );
+        } catch (cleanupError) {
+            console.error(
+                "Failed to cleanup thumbnail:",
+                cleanupError
+            );
+        }
+    }
+    // return sucess message
+    return res.
+    status(200)
+    .json(
+        new apiResponse(
+            200,
+            {},
+            "Video deleted Successfully"
+        )
+    )
     
-// } catch (error) {
-    
-// }
+
 });
 const togglePublishStatus = asyncHandler(async (req, res) => {
 
