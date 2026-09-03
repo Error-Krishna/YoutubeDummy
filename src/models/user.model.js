@@ -75,6 +75,11 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 
 // Short-lived access token
 userSchema.methods.generateAccessToken = function () {
+    console.log(
+        "SIGN SECRET LENGTH:",
+        process.env.ACCESS_TOKEN_SECRET?.length
+    );
+
     return jwt.sign(
         {
             _id: this._id,

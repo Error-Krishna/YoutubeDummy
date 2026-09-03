@@ -27,15 +27,27 @@ import playlistRouter from "./routes/playlist.route.js"
 import dashboardRouter from "./routes/dashboard.route.js"
 
 //routes declaration
-app.use("/api/v1/healthcheck", healthcheckRouter)
+app.use("/api/v1/videos",videoRouter)
+app.use("/api/v1/healthcheck",()=>{console.log("health check")} )
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tweets", tweetRouter)
 app.use("/api/v1/subscriptions", subscriptionRouter)
-app.use("/api/v1/videos", videoRouter)
+
 app.use("/api/v1/comments", commentRouter)
 app.use("/api/v1/likes", likeRouter)
 app.use("/api/v1/playlist", playlistRouter)
 app.use("/api/v1/dashboard", dashboardRouter)
+
+// Global error handler
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+
+    return res.status(statusCode).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        errors: err.errors || [],
+    });
+});
 
 // http://localhost:8000/api/v1/users/register
 

@@ -19,7 +19,7 @@ const videoSchema = new Schema({
         type:String,
         required: true,
     },
-    duration:{
+    duration:{            // automatically calculated from video file
         type:Number,
         required: true,
     },
@@ -31,11 +31,11 @@ const videoSchema = new Schema({
         type:Boolean,
         default: true,
     },
-    owner:{
+    owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
-
-}
+        required: true,
+    }
 },{timestamps: true});
 videoSchema.plugin(mongooseAggregatePaginate)
 export const Video = mongoose.model("Video", videoSchema);
