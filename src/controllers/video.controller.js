@@ -227,7 +227,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 });
 const deleteVideo = asyncHandler(async (req, res) => {
     // Authenticate user
-    const user = req.user;    // Validate User
+    const user = req.user._id;    // Validate User
     if(!user){
         throw new apiError(404, "User not found");
     }
