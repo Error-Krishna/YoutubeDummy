@@ -63,12 +63,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
         // 6. Upload video
         videoUploadResult = await uploadOnCloudinary(
             videoLocalPath,
-            {
-                resource_type: "video"
-            }
         );
 
-        if (!videoUploadResult?.url) {
+        if (!videoUploadResult?.secure_url) {
             throw new apiError(
                 500,
                 "Failed to upload video"
@@ -80,7 +77,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
             thumbnailLocalPath
         );
 
-        if (!thumbnailUploadResult?.url) {
+        if (!thumbnailUploadResult?.secure_url) {
             throw new apiError(
                 500,
                 "Failed to upload thumbnail"
@@ -100,9 +97,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
         // 9. Create database document
         const video = await Video.create({
-            videoFile: videoUploadResult.url,
+            videoFile: videoUploadResult.secure_url,
             videoPublicId: videoUploadResult.public_id,
-            thumbnail: thumbnailUploadResult.url,
+            thumbnail: thumbnailUploadResult.secure_url,
             thumbnailPublicId: thumbnailUploadResult.public_id,
             title: trimmedTitle,
             description: trimmedDescription,
@@ -161,14 +158,76 @@ const publishAVideo = asyncHandler(async (req, res) => {
 });
 const getVideoById = asyncHandler(async (req, res) => {
 
+    // 1. Read videoId from URL
+    const { videoId } = req.params;
+
+    // 2. Validate videoId format
+    if (!mongoose.Types.ObjectId.isValid(videoId)) {
+        throw new apiError(
+            400,
+            "Invalid video ID"
+        );
+    }
+
+    // 3. Find video document
+    const videoObject = await Video.findById(videoId);
+
+    // 4. If video doesn't exist → 404
+    if (!videoObject) {
+        throw new apiError(
+            404,
+            "Video not found"
+        );
+    }
+
+    // 5. If video is private
+    if (!videoObject.isPublished) {
+
+        // User must be authenticated
+        if (!req.user) {
+            throw new apiError(
+                401,
+                "User must be authenticated"
+            );
+        }
+
+        // User must be the owner
+        const owner = videoObject.owner;
+
+        if (req.user._id.toString() !== owner.toString()) {
+            throw new apiError(
+                403,
+                "You are not authorized to access this video"
+            );
+        }
+    }
+
+    // 6. Return video details
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            {
+                videoFile: videoObject.videoFile,
+                videoPublicId: videoObject.videoPublicId,
+                thumbnail: videoObject.thumbnail,
+                thumbnailPublicId: videoObject.thumbnailPublicId,
+                title: videoObject.title,
+                description: videoObject.description,
+                duration: videoObject.duration,
+                views: videoObject.views,
+                isPublished: videoObject.isPublished,
+                owner: videoObject.owner
+            },
+            "Video received by id"
+        )
+    );
 });
 const updateVideo = asyncHandler(async (req, res) => {
 
 });
 const deleteVideo = asyncHandler(async (req, res) => {
     // Authenticate user
-    const user = await User.findById(req.user._id);
-    // Validate User
+    const user = req.user;    // Validate User
     if(!user){
         throw new apiError(404, "User not found");
     }
@@ -208,10 +267,10 @@ const deleteVideo = asyncHandler(async (req, res) => {
         }
     }
 
-    if(deletedVideo.thumbnailPublicId){
+    if (deletedVideo.thumbnailPublicId) {
         try {
             await deleteFromCloudinary(
-                deleteVideo.thumbnailPublicId,
+                deletedVideo.thumbnailPublicId,
                 "image"
             );
         } catch (cleanupError) {
