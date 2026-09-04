@@ -294,6 +294,71 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 });
 const togglePublishStatus = asyncHandler(async (req, res) => {
+    // authentication
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new apiError(404, "User not found");
+    }
+
+    // get video id from url
+    const { videoId } = req.params;
+
+    // validate video id
+    if(!videoId){
+        throw new apiError(404, "No videoId was found");
+    }
+    if(!mongoose.Types.ObjectId.isValid(videoId)){
+        throw new apiError(400, "Invalid video id")
+    }
+
+    // find the video
+    const videoObject = await Video.findById(videoId); 
+    if(!videoObject){
+        throw new apiError(404, "video was not found")
+    }
+
+    // check authorization
+    if(user._id.toString() !== videoObject.owner.toString()){
+        throw new apiError(403, "Unauthorized request")
+    }
+
+    // invert the current status of ispublished
+    videoObject.isPublished = !videoObject.isPublished
+
+    // update the db
+    // const user = await User.findByIdAndUpdate(
+    //     req.user?._id,
+    //     {
+    //         $set: updateFields
+    //     },
+    //     {
+    //         new: true
+    //     }
+    // ).select("-password -refreshToken");
+    const updatedVideoObject = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $set: {
+                isPublished: videoObject.isPublished
+            }
+        },
+        {
+            new: true
+        }
+    );
+    // return updated video and appropriate response
+    return res
+    .status(200)
+    .json(
+        new apiResponse(
+            200,
+            updatedVideoObject,
+            updatedVideoObject.isPublished
+                ? "Video Published Successfully"
+                : "Video Unpublished Successfully"
+        )
+    );
 
 });
 
