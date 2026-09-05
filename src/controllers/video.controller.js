@@ -12,7 +12,118 @@ import mongoose from "mongoose";
 
 // 🟡 TODO
 const getAllVideos = asyncHandler(async (req, res) => {
+    // 1. Get query parameters
+    const {
+        page = 1,
+        limit = 10,
+        sortBy = "createdAt",
+        sortType = "desc",
+        userId
+    } = req.query;
 
+    // 2. Validate pagination
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+
+    if (
+        !Number.isInteger(pageNumber) ||
+        pageNumber < 1
+    ) {
+        throw new apiError(400, "Invalid page number");
+    }
+
+    if (
+        !Number.isInteger(limitNumber) ||
+        limitNumber < 1 ||
+        limitNumber > 100
+    ) {
+        throw new apiError(400, "Invalid limit");
+    }
+
+    // 3. Validate sort order
+    if (!["asc", "desc"].includes(sortType.toLowerCase())) {
+        throw new apiError(400, "Invalid sort type");
+    }
+
+    // 4. Create match filter
+    const matchStage = {
+        isPublished: true
+    };
+
+    // Optional: get videos of a specific user
+    if (userId) {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new apiError(400, "Invalid user ID");
+        }
+
+        matchStage.owner = new mongoose.Types.ObjectId(userId);
+    }
+
+    // 5. Create aggregation pipeline
+    const pipeline = [
+        {
+            $match: matchStage
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        {
+            $addFields: {
+                owner: {
+                    $first: "$owner"
+                }
+            }
+        },
+        {
+            $project: {
+                videoFile: 1,
+                thumbnail: 1,
+                title: 1,
+                description: 1,
+                duration: 1,
+                views: 1,
+                isPublished: 1,
+                owner: {
+                    _id: 1,
+                    fullname: 1,
+                    username: 1,
+                    avatar: 1
+                },
+                createdAt: 1,
+                updatedAt: 1
+            }
+        },
+        {
+            $sort: {
+                [sortBy]: sortType.toLowerCase() === "asc" ? 1 : -1
+            }
+        }
+    ];
+
+    // 6. Paginate results
+    const aggregate = Video.aggregate(pipeline);
+
+    const videos = await Video.aggregatePaginate(
+        aggregate,
+        {
+            page: pageNumber,
+            limit: limitNumber
+        }
+    );
+
+    // 7. Return response
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            videos,
+            "Videos fetched successfully"
+        )
+    );
 });
 
 
