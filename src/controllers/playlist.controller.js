@@ -5,7 +5,7 @@ import { Playlists } from "../models/playlist.model.js";
 import { Video } from "../models/video.model.js";
 import mongoose from "mongoose";
 
-
+// ✅ Done
 const createPlaylist = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -43,7 +43,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const getUserPlaylists = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -69,7 +69,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const getPlaylistById = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -114,7 +114,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -184,7 +184,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -252,7 +252,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const deletePlaylist = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -306,7 +306,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const updatePlaylist = asyncHandler(async (req, res) => {
 
     const user = req.user;
