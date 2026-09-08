@@ -9,7 +9,6 @@ const tweetSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }
-},{timeStamps: true})
+}, { timestamps: true });
 
-
-export const Tweets = mongoose.model("Tweets", playlistSchema)
+export const Tweets = mongoose.model("Tweets", tweetSchema);

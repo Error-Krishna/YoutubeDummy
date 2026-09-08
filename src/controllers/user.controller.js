@@ -6,6 +6,7 @@ import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
+// ✅ Done
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -39,6 +40,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 };
 
+// ✅ Done
 const registerUser = asyncHandler(async (req, res) => {
     const {
         fullname,
@@ -117,6 +119,7 @@ const registerUser = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const loginUser = asyncHandler(async (req, res) => {
     const {
         email,
@@ -192,6 +195,7 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 });
 
+// ✅ Done
 const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -223,6 +227,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         );
 });
 
+// ✅ Done
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken =
         req.cookies?.refreshToken || req.body?.refreshToken;
@@ -282,6 +287,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
+// ✅ Done
 const changeCurrentPassword = asyncHandler(async (req, res) => {
     const {
         oldPassword,
@@ -331,6 +337,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new apiResponse(
@@ -341,6 +348,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const {
         fullname,
@@ -383,6 +391,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req.file?.path;
 
@@ -423,6 +432,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path;
 
@@ -464,6 +474,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const getUserChannelProfile = asyncHandler(async (req, res) => {
     const { username } = req.params;
 
@@ -544,6 +555,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     );
 });
 
+// ✅ Done
 const getWatchHistory = asyncHandler(async (req, res) => {
     const user = await User.aggregate([
         {

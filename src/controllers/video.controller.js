@@ -10,7 +10,7 @@ import { Video } from "../models/video.model.js";
 import mongoose from "mongoose";
 
 
-// 🟡 TODO
+// ✅ Done
 const getAllVideos = asyncHandler(async (req, res) => {
     // 1. Get query parameters
     const {
