@@ -7,7 +7,7 @@ import { Comments } from "../models/comment.model.js";
 import { Tweets } from "../models/tweets.model.js";
 import mongoose from "mongoose";
 
-
+// ✅ Done
 const getLikedVideos = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -36,7 +36,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const toggleCommentLike = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -100,7 +100,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const toggleTweetLike = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -164,7 +164,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const toggleVideoLike = asyncHandler(async (req, res) => {
 
     const user = req.user;

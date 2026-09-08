@@ -5,7 +5,7 @@ import { Comments } from "../models/comment.model.js";
 import { Video } from "../models/video.model.js";
 import mongoose from "mongoose";
 
-
+// ✅ Done
 const getAllVideoComments = asyncHandler(async (req, res) => {
 
     const { videoId } = req.params;
@@ -41,7 +41,7 @@ const getAllVideoComments = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const addComments = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -104,7 +104,7 @@ const addComments = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const updateComments = asyncHandler(async (req, res) => {
 
     const user = req.user;
@@ -201,7 +201,7 @@ const updateComments = asyncHandler(async (req, res) => {
     );
 });
 
-
+// ✅ Done
 const deleteComments = asyncHandler(async (req, res) => {
 
     const user = req.user;
