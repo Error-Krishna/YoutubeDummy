@@ -15,8 +15,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "check": "find src -type f -name \"*.js\" -print0 | while IFS= read -r -d '' file; do node --check \"$file\" || exit 1; done",
+    "test": "echo \"No tests configured yet\""
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
