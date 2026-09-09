@@ -22,38 +22,104 @@ export default function Login() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-softCard p-6 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
-      {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-softPrimary"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-softPrimary"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-softPrimary"
-        />
-        <button type="submit" className="w-full bg-softPrimary text-white py-2 rounded-lg hover:bg-opacity-90">
-          Login
-        </button>
-      </form>
-      <p className="text-sm text-center mt-3">
-        Don't have an account? <Link to="/register" className="text-softSecondary hover:underline">Register</Link>
-      </p>
+    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-8">
+      <div className="w-full max-w-md">
+
+        {/* Header */}
+        <div className="mb-7 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-indigo-600/20">
+            T
+          </div>
+
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Welcome back
+          </h1>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Sign in to continue to TubeSoft
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="surface p-6 shadow-sm sm:p-8">
+
+          {error && (
+            <div className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                Username
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="input"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                Email
+              </label>
+
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                Password
+              </label>
+
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary mt-2 w-full"
+            >
+              Sign in
+            </button>
+          </form>
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs font-medium text-slate-400">
+              OR
+            </span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          <p className="text-center text-sm text-slate-500">
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              className="font-semibold text-indigo-600 hover:text-indigo-700"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

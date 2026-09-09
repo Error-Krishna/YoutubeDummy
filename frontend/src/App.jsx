@@ -20,26 +20,104 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
-    <div className="min-h-screen bg-softBg">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
-      <main className="container mx-auto px-4 py-6 max-w-6xl">
+
+      <main className="page-container py-6 sm:py-8 lg:py-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
-          <Route path="/video/:videoId/edit" element={<ProtectedRoute><EditVideo /></ProtectedRoute>} />
+          <Route
+            path="/video/:videoId/edit"
+            element={
+              <ProtectedRoute>
+                <EditVideo />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/c/:username" element={<ChannelProfile />} />
-          <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/liked-videos" element={<ProtectedRoute><LikedVideos /></ProtectedRoute>} />
-          <Route path="/history" element={<ProtectedRoute><WatchHistory /></ProtectedRoute>} />
-          <Route path="/subscriptions" element={<ProtectedRoute><Subscriptions /></ProtectedRoute>} />
-          <Route path="/playlists" element={<ProtectedRoute><Playlists /></ProtectedRoute>} />
-          <Route path="/playlist/:playlistId" element={<ProtectedRoute><PlaylistDetails /></ProtectedRoute>} />
-          <Route path="/tweets" element={<ProtectedRoute><Tweets /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route
+            path="/upload"
+            element={
+              <ProtectedRoute>
+                <Upload />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/liked-videos"
+            element={
+              <ProtectedRoute>
+                <LikedVideos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <WatchHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subscriptions"
+            element={
+              <ProtectedRoute>
+                <Subscriptions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/playlists"
+            element={
+              <ProtectedRoute>
+                <Playlists />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/playlist/:playlistId"
+            element={
+              <ProtectedRoute>
+                <PlaylistDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tweets"
+            element={
+              <ProtectedRoute>
+                <Tweets />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
     </div>

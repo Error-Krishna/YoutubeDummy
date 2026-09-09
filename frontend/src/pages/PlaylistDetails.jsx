@@ -72,98 +72,245 @@ export default function PlaylistDetails() {
     }
   }
 
-  if (loading) return <div className="text-center py-10">Loading playlist...</div>
-  if (error) return <div className="text-center py-10 text-red-500">{error}</div>
-  if (!playlist) return <div className="text-center py-10">Playlist not found</div>
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="h-56 animate-pulse rounded-3xl border border-slate-200 bg-white" />
+        <div className="space-y-3">
+          {[1, 2, 3].map(item => (
+            <div
+              key={item}
+              className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white"
+            />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-xl font-bold text-rose-500">
+          !
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-slate-900">
+          Unable to load playlist
+        </h2>
+        <p className="mt-1 text-sm text-slate-500">{error}</p>
+      </div>
+    )
+  }
+
+  if (!playlist) {
+    return (
+      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-xl font-bold text-slate-500">
+          ?
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-slate-900">
+          Playlist not found
+        </h2>
+        <p className="mt-1 text-sm text-slate-500">
+          This playlist may have been removed or is no longer available.
+        </p>
+      </div>
+    )
+  }
 
   return (
-    <div>
+    <div className="space-y-8">
       {editing ? (
-        <form onSubmit={handleSaveEdit} className="bg-softCard p-4 rounded-lg shadow-sm mb-6 space-y-3">
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg"
-            required
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg"
-            rows="2"
-            required
-          />
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="bg-softPrimary text-white px-4 py-2 rounded-lg text-sm hover:bg-opacity-90 disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditing(false)}
-              className="px-4 py-2 rounded-lg text-sm bg-gray-100 hover:bg-gray-200"
-            >
-              Cancel
-            </button>
+        <form
+          onSubmit={handleSaveEdit}
+          className="surface overflow-hidden"
+        >
+          <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
+            <p className="text-sm font-bold text-slate-900">Edit playlist</p>
+            <p className="mt-0.5 text-xs text-slate-500">
+              Update the name and description of your collection.
+            </p>
+          </div>
+
+          <div className="space-y-5 p-5 sm:p-6">
+            <div>
+              <label
+                htmlFor="playlist-name"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Playlist name
+              </label>
+              <input
+                id="playlist-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="input"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="playlist-description"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Description
+              </label>
+              <textarea
+                id="playlist-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="textarea"
+                rows="4"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="btn-primary"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
           </div>
         </form>
       ) : (
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800">{playlist.name}</h1>
-            <p className="text-gray-500 mt-1">{playlist.description}</p>
+        <header className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <div className="bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 px-6 py-8 text-white sm:px-8 sm:py-10">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="min-w-0">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-xl font-bold ring-1 ring-white/20">
+                  ▤
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-100">
+                  Playlist
+                </p>
+                <h1 className="mt-2 break-words text-2xl font-extrabold tracking-tight sm:text-3xl">
+                  {playlist.name}
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-indigo-100 sm:text-base">
+                  {playlist.description}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 gap-2">
+                <button
+                  onClick={() => setEditing(true)}
+                  className="rounded-xl bg-white/15 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/25"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleDeletePlaylist}
+                  className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-rose-600 shadow-sm transition-colors hover:bg-rose-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2 shrink-0 ml-4">
-            <button
-              onClick={() => setEditing(true)}
-              className="text-sm bg-gray-100 px-3 py-1 rounded-lg hover:bg-gray-200"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleDeletePlaylist}
-              className="text-sm bg-red-50 text-red-600 px-3 py-1 rounded-lg hover:bg-red-100"
-            >
-              Delete
-            </button>
+
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 px-6 py-4 text-sm sm:px-8">
+            <span className="font-semibold text-slate-900">
+              {playlist.videos?.length || 0}{' '}
+              {playlist.videos?.length === 1 ? 'video' : 'videos'}
+            </span>
+            <span className="text-slate-400">
+              Curated collection
+            </span>
           </div>
-        </div>
+        </header>
       )}
 
-      {(!playlist.videos || playlist.videos.length === 0) ? (
-        <p className="text-gray-400">No videos in this playlist yet.</p>
-      ) : (
-        <div className="space-y-3">
-          {playlist.videos.map((video) => (
-            <div key={video._id} className="flex items-center gap-3 bg-softCard p-3 rounded-lg shadow-sm">
-              <Link to={`/video/${video._id}`} className="shrink-0">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-32 aspect-video object-cover rounded-md bg-gray-200"
-                />
-              </Link>
-              <div className="flex-1 min-w-0">
-                <Link to={`/video/${video._id}`} className="font-medium text-gray-800 line-clamp-1 hover:underline">
-                  {video.title}
-                </Link>
-                <p className="text-sm text-gray-500 mt-1 line-clamp-1">{video.description}</p>
-                <p className="text-xs text-gray-400 mt-1">{video.views} views</p>
-              </div>
-              <button
-                onClick={() => handleRemoveVideo(video._id)}
-                className="text-xs text-red-500 hover:underline shrink-0"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
+      <section>
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="section-title">Videos</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Videos saved in this playlist.
+            </p>
+          </div>
+          {playlist.videos?.length > 0 && (
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+              {playlist.videos.length}
+            </span>
+          )}
         </div>
-      )}
+
+        {(!playlist.videos || playlist.videos.length === 0) ? (
+          <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl font-bold text-indigo-600">
+              ▶
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-slate-900">
+              This playlist is empty
+            </h3>
+            <p className="mt-1 max-w-sm text-sm leading-6 text-slate-500">
+              Add videos to this playlist and they'll appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {playlist.videos.map((video, index) => (
+              <div
+                key={video._id}
+                className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md sm:gap-4 sm:p-4"
+              >
+                <span className="hidden w-6 shrink-0 text-center text-xs font-bold text-slate-300 sm:block">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+
+                <Link
+                  to={`/video/${video._id}`}
+                  className="relative w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:w-40"
+                >
+                  <div className="aspect-video">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                </Link>
+
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to={`/video/${video._id}`}
+                    className="line-clamp-2 text-sm font-bold leading-5 text-slate-900 transition-colors hover:text-indigo-600 sm:text-base"
+                  >
+                    {video.title}
+                  </Link>
+                  <p className="mt-1 hidden line-clamp-1 text-sm text-slate-500 sm:block">
+                    {video.description}
+                  </p>
+                  <p className="mt-1.5 text-xs font-medium text-slate-400">
+                    {video.views} views
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleRemoveVideo(video._id)}
+                  className="shrink-0 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   )
+
 }

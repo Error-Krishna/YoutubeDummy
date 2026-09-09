@@ -80,83 +80,193 @@ export default function Tweets() {
     }
   }
 
-  if (loading) return <div className="text-center py-10">Loading tweets...</div>
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-5">
+        <div className="space-y-2">
+          <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
+          <div className="h-8 w-40 animate-pulse rounded-lg bg-slate-200" />
+          <div className="h-4 w-64 animate-pulse rounded bg-slate-200" />
+        </div>
+
+        <div className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white" />
+
+        {[1, 2, 3].map(item => (
+          <div
+            key={item}
+            className="h-36 animate-pulse rounded-2xl border border-slate-200 bg-white"
+          />
+        ))}
+      </div>
+    )
+  }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Your Tweets</h1>
+    <div className="mx-auto max-w-2xl space-y-6">
+      <header>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
+          Social
+        </p>
+        <div className="mt-1 flex items-end justify-between gap-3">
+          <div>
+            <h1 className="page-title">Your Tweets</h1>
+            <p className="page-subtitle">
+              Share updates and thoughts with your audience.
+            </p>
+          </div>
 
-      <form onSubmit={handlePost} className="bg-softCard p-4 rounded-lg shadow-sm mb-6 flex gap-2">
-        <input
-          type="text"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="What's happening?"
-          className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-softPrimary"
-        />
-        <button
-          type="submit"
-          disabled={posting}
-          className="bg-softPrimary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 disabled:opacity-50"
-        >
-          {posting ? 'Posting...' : 'Tweet'}
-        </button>
+          {tweets.length > 0 && (
+            <span className="shrink-0 rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-600">
+              {tweets.length} {tweets.length === 1 ? 'post' : 'posts'}
+            </span>
+          )}
+        </div>
+      </header>
+
+      <form
+        onSubmit={handlePost}
+        className="surface overflow-hidden"
+      >
+        <div className="flex gap-3 p-4 sm:p-5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-sm font-extrabold text-indigo-600">
+            T
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <input
+              type="text"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What's happening?"
+              className="w-full border-0 bg-transparent px-0 py-1 text-[15px] text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
+            />
+
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+              <span className="text-xs text-slate-400">
+                Share something with your audience
+              </span>
+
+              <button
+                type="submit"
+                disabled={posting}
+                className="btn-primary px-4 py-2"
+              >
+                {posting ? 'Posting...' : 'Post'}
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
 
       {tweets.length === 0 ? (
-        <p className="text-gray-400">No tweets yet.</p>
+        <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl font-bold text-indigo-600">
+            T
+          </div>
+          <h2 className="mt-4 text-lg font-bold text-slate-900">
+            No posts yet
+          </h2>
+          <p className="mt-1 max-w-sm text-sm leading-6 text-slate-500">
+            Your thoughts and updates will appear here after you publish your first post.
+          </p>
+        </div>
       ) : (
         <div className="space-y-3">
           {tweets.map((tweet) => (
-            <div key={tweet._id} className="bg-softCard p-4 rounded-lg shadow-sm">
+            <article
+              key={tweet._id}
+              className="surface overflow-hidden transition-shadow duration-200 hover:shadow-md"
+            >
               {editingId === tweet._id ? (
-                <div className="space-y-2">
+                <div className="space-y-4 p-4 sm:p-5">
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      Edit post
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      Update your post before saving.
+                    </p>
+                  </div>
+
                   <input
                     type="text"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="input"
                   />
-                  <div className="flex gap-2">
+
+                  <div className="flex justify-end gap-2">
                     <button
-                      onClick={() => handleSaveEdit(tweet._id)}
-                      className="text-xs bg-softPrimary text-white px-3 py-1 rounded-lg hover:bg-opacity-90"
-                    >
-                      Save
-                    </button>
-                    <button
+                      type="button"
                       onClick={() => setEditingId(null)}
-                      className="text-xs bg-gray-100 px-3 py-1 rounded-lg hover:bg-gray-200"
+                      className="btn-secondary px-3 py-2"
                     >
                       Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveEdit(tweet._id)}
+                      className="btn-primary px-3 py-2"
+                    >
+                      Save
                     </button>
                   </div>
                 </div>
               ) : (
-                <>
-                  <p className="text-gray-800">{tweet.content}</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-xs text-gray-400">{new Date(tweet.createdAt).toLocaleString()}</span>
-                    <button onClick={() => handleLike(tweet._id)} className="text-xs text-softSecondary hover:underline">
-                      Like
-                    </button>
-                    {user?._id === tweet.owner && (
-                      <>
-                        <button onClick={() => startEdit(tweet)} className="text-xs text-gray-500 hover:underline">
-                          Edit
+                <div className="p-4 sm:p-5">
+                  <div className="flex gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-extrabold text-white">
+                      T
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        <span className="text-sm font-bold text-slate-900">
+                          Your post
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          · {new Date(tweet.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+
+                      <p className="mt-3 whitespace-pre-wrap break-words text-[15px] leading-6 text-slate-700">
+                        {tweet.content}
+                      </p>
+
+                      <div className="mt-4 flex flex-wrap items-center gap-1 border-t border-slate-100 pt-3">
+                        <button
+                          onClick={() => handleLike(tweet._id)}
+                          className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                        >
+                          ♥ Like
                         </button>
-                        <button onClick={() => handleDelete(tweet._id)} className="text-xs text-red-500 hover:underline">
-                          Delete
-                        </button>
-                      </>
-                    )}
+
+                        {user?._id === tweet.owner && (
+                          <>
+                            <button
+                              onClick={() => startEdit(tweet)}
+                              className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(tweet._id)}
+                              className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </>
+                </div>
               )}
-            </div>
+            </article>
           ))}
         </div>
       )}
     </div>
   )
+
 }

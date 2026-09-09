@@ -122,39 +122,95 @@ export default function VideoDetails() {
     }
   }
 
-  if (loading) return <div className="text-center py-10">Loading video...</div>
-  if (!video) return <div className="text-center py-10">Video not found.</div>
+  if (loading) {
+    return (
+      <div className="space-y-5">
+        <div className="aspect-video animate-pulse rounded-2xl bg-slate-200" />
+        <div className="h-8 w-3/4 animate-pulse rounded-lg bg-slate-200" />
+        <div className="h-4 w-1/3 animate-pulse rounded bg-slate-200" />
+      </div>
+    )
+  }
+
+  if (!video) {
+    return (
+      <div className="surface flex min-h-64 flex-col items-center justify-center text-center">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
+          ?
+        </div>
+        <h2 className="text-lg font-bold text-slate-900">Video not found</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          This video may have been removed or is unavailable.
+        </p>
+        <Link to="/" className="btn-primary mt-5">
+          Back to videos
+        </Link>
+      </div>
+    )
+  }
 
   return (
-    <div>
-      <div className="bg-black rounded-xl overflow-hidden aspect-video">
-        <video
-          src={video.videoFile}
-          controls
-          className="w-full h-full"
-          poster={video.thumbnail}
-        />
+    <div className="mx-auto max-w-6xl space-y-6">
+
+      {/* Video player */}
+      <div className="overflow-hidden rounded-2xl bg-black shadow-xl ring-1 ring-slate-900/10">
+        <div className="aspect-video">
+          <video
+            src={video.videoFile}
+            controls
+            className="h-full w-full"
+            poster={video.thumbnail}
+          />
+        </div>
       </div>
-      <div className="mt-4">
-        <div className="flex items-start justify-between flex-wrap gap-2">
-          <h1 className="text-2xl font-semibold">{video.title}</h1>
+
+      {/* Main information */}
+      <section className="space-y-5">
+
+        {/* Title + owner actions */}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+              {video.title}
+            </h1>
+
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+              <span>{video.views} views</span>
+              <span className="text-slate-300">•</span>
+              <span>
+                {new Date(video.createdAt).toLocaleDateString()}
+              </span>
+
+              {video.isPublished !== undefined && (
+                <>
+                  <span className="text-slate-300">•</span>
+                  <span className={video.isPublished ? 'text-emerald-600' : 'text-amber-600'}>
+                    {video.isPublished ? 'Published' : 'Unpublished'}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
           {isOwner && (
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Link
                 to={`/video/${videoId}/edit`}
-                className="text-sm bg-gray-100 px-3 py-1 rounded-lg hover:bg-gray-200"
+                className="btn-secondary"
               >
                 Edit
               </Link>
+
               <button
                 onClick={handleTogglePublish}
-                className="text-sm bg-gray-100 px-3 py-1 rounded-lg hover:bg-gray-200"
+                className="btn-secondary"
               >
                 {video.isPublished ? 'Unpublish' : 'Publish'}
               </button>
+
               <button
                 onClick={handleDelete}
-                className="text-sm bg-red-50 text-red-600 px-3 py-1 rounded-lg hover:bg-red-100"
+                className="inline-flex items-center justify-center rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
               >
                 Delete
               </button>
@@ -162,42 +218,59 @@ export default function VideoDetails() {
           )}
         </div>
 
-        <div className="flex items-center gap-4 mt-2 flex-wrap">
-          <span className="text-sm text-gray-500">{video.views} views</span>
-          <span className="text-sm text-gray-500">{new Date(video.createdAt).toLocaleDateString()}</span>
+        {/* Action bar */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-5">
+
           <button
             onClick={handleLike}
-            className={`text-sm px-3 py-1 rounded-full hover:bg-opacity-90 ${
-              liked ? 'bg-softPrimary text-white' : 'bg-softSecondary text-white'
+            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+              liked
+                ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
+            <span>{liked ? '♥' : '♡'}</span>
             {liked ? 'Liked' : 'Like'}
           </button>
+
           <div className="relative">
             <button
               onClick={openPlaylistMenu}
-              className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200"
+              className="btn-secondary"
             >
-              Save to Playlist
+              + Save
             </button>
+
             {showPlaylistMenu && (
-              <div className="absolute z-10 mt-2 bg-white border rounded-lg shadow-lg w-56 py-1">
+              <div className="absolute left-0 top-full z-30 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-xl shadow-slate-900/10">
+
+                <div className="border-b border-slate-100 px-4 pb-2 pt-1">
+                  <p className="text-sm font-bold text-slate-900">
+                    Save to playlist
+                  </p>
+                </div>
+
                 {playlists.length === 0 ? (
-                  <p className="px-3 py-2 text-sm text-gray-400">No playlists yet.</p>
+                  <p className="px-4 py-4 text-sm text-slate-400">
+                    No playlists yet.
+                  </p>
                 ) : (
-                  playlists.map((pl) => (
-                    <button
-                      key={pl._id}
-                      onClick={() => handleAddToPlaylist(pl._id)}
-                      className="block w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
-                    >
-                      {pl.name}
-                    </button>
-                  ))
+                  <div className="max-h-60 overflow-y-auto p-1.5">
+                    {playlists.map((pl) => (
+                      <button
+                        key={pl._id}
+                        onClick={() => handleAddToPlaylist(pl._id)}
+                        className="block w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+                      >
+                        {pl.name}
+                      </button>
+                    ))}
+                  </div>
                 )}
+
                 <button
                   onClick={() => setShowPlaylistMenu(false)}
-                  className="block w-full text-left px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 border-t"
+                  className="w-full border-t border-slate-100 px-4 py-2.5 text-left text-xs font-semibold text-slate-400 hover:bg-slate-50"
                 >
                   Close
                 </button>
@@ -206,36 +279,67 @@ export default function VideoDetails() {
           </div>
         </div>
 
-        <div className="mt-3 p-4 bg-softCard rounded-lg shadow-sm">
-          <p className="text-gray-700 whitespace-pre-wrap">{video.description}</p>
+        {/* Description + creator */}
+        <div className="surface overflow-hidden">
+
+          <div className="p-5 sm:p-6">
+            <p className="whitespace-pre-wrap text-sm leading-6 text-slate-600">
+              {video.description}
+            </p>
+          </div>
+
           {video.owner && (
-            <div className="flex items-center justify-between mt-3 pt-3 border-t">
-              <Link to={`/c/${video.owner.username}`} className="flex items-center gap-2">
+            <div className="flex flex-col gap-4 border-t border-slate-100 bg-slate-50/60 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+
+              <Link
+                to={`/c/${video.owner.username}`}
+                className="flex min-w-0 items-center gap-3"
+              >
                 <img
                   src={video.owner.avatar}
                   alt={video.owner.fullname}
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="h-11 w-11 rounded-full object-cover ring-2 ring-white shadow-sm"
                 />
-                <span className="text-sm font-medium text-gray-700">{video.owner.fullname}</span>
+
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-slate-900">
+                    {video.owner.fullname}
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    @{video.owner.username}
+                  </p>
+                </div>
               </Link>
+
               {!isOwner && (
                 <button
                   onClick={handleToggleSubscribe}
                   disabled={subLoading}
-                  className={`text-xs px-3 py-1 rounded-full disabled:opacity-50 ${
+                  className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                     subscribed
-                      ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      : 'bg-softPrimary text-white hover:bg-opacity-90'
+                      ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 hover:shadow-md'
                   }`}
                 >
-                  {subscribed ? 'Subscribed' : 'Subscribe'}
+                  {subLoading
+                    ? 'Updating...'
+                    : subscribed
+                      ? 'Subscribed'
+                      : 'Subscribe'}
                 </button>
               )}
             </div>
           )}
         </div>
-      </div>
-      <CommentsSection videoId={videoId} />
+      </section>
+
+      {/* Comments */}
+      <section className="pt-2">
+        <CommentsSection videoId={videoId} />
+      </section>
     </div>
   )
+
+
 }
