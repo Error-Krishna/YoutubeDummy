@@ -1,21 +1,22 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Home from './pages/Home'
-import VideoDetails from './pages/VideoDetails'
-import EditVideo from './pages/EditVideo'
-import Upload from './pages/Upload'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Profile from './pages/Profile'
-import ChannelProfile from './pages/ChannelProfile'
-import Dashboard from './pages/Dashboard'
-import LikedVideos from './pages/LikedVideos'
-import WatchHistory from './pages/WatchHistory'
-import Subscriptions from './pages/Subscriptions'
-import Playlists from './pages/Playlists'
-import PlaylistDetails from './pages/PlaylistDetails'
-import Tweets from './pages/Tweets'
-import Settings from './pages/Settings'
+const Home = lazy(() => import('./pages/Home'))
+const VideoDetails = lazy(() => import('./pages/VideoDetails'))
+const EditVideo = lazy(() => import('./pages/EditVideo'))
+const Upload = lazy(() => import('./pages/Upload'))
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const Profile = lazy(() => import('./pages/Profile'))
+const ChannelProfile = lazy(() => import('./pages/ChannelProfile'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const LikedVideos = lazy(() => import('./pages/LikedVideos'))
+const WatchHistory = lazy(() => import('./pages/WatchHistory'))
+const Subscriptions = lazy(() => import('./pages/Subscriptions'))
+const Playlists = lazy(() => import('./pages/Playlists'))
+const PlaylistDetails = lazy(() => import('./pages/PlaylistDetails'))
+const Tweets = lazy(() => import('./pages/Tweets'))
+const Settings = lazy(() => import('./pages/Settings'))
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -24,6 +25,27 @@ function App() {
       <Navbar />
 
       <main className="page-container py-6 sm:py-8 lg:py-10">
+        <Suspense
+          fallback={
+            <div className="page-loading">
+              <div className="page-loading-card">
+                <div className="flex items-center gap-4">
+                  <div className="shimmer h-12 w-12 shrink-0 rounded-2xl" />
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="shimmer h-4 w-2/3 rounded-lg" />
+                    <div className="shimmer h-3 w-1/2 rounded-lg" />
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  <div className="shimmer h-3 w-full rounded-lg" />
+                  <div className="shimmer h-3 w-5/6 rounded-lg" />
+                  <div className="shimmer h-3 w-2/3 rounded-lg" />
+                </div>
+              </div>
+            </div>
+          }
+        >
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/video/:videoId" element={<VideoDetails />} />
@@ -119,6 +141,7 @@ function App() {
             }
           />
         </Routes>
+        </Suspense>
       </main>
     </div>
   )

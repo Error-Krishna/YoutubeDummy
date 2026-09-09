@@ -404,7 +404,7 @@ const updateVideo = asyncHandler(async (req, res) => {
             "Invalid video ID"
         );
     }
-
+21
     // 4. Find video
     const videoObject = await Video.findById(videoId);
 
