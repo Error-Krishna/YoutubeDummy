@@ -4,8 +4,12 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 
+const corsOrigin = process.env.CORS_ORIGIN || "*"
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    // Reflect the request origin instead of a bare "*" so that
+    // credentials (cookies) can actually be sent by the browser.
+    origin: corsOrigin === "*" ? true : corsOrigin.split(",").map(o => o.trim()),
     credentials: true
 }))
 
@@ -28,7 +32,7 @@ import dashboardRouter from "./routes/dashboard.route.js"
 
 //routes declaration
 app.use("/api/v1/videos",videoRouter)
-app.use("/api/v1/healthcheck",()=>{console.log("health check")} )
+app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tweets", tweetRouter)
 app.use("/api/v1/subscriptions", subscriptionRouter)

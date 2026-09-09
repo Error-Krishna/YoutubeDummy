@@ -45,6 +45,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
         throw new apiError(400, "Invalid sort type");
     }
 
+    const allowedSortFields = ["createdAt", "views", "duration", "title"];
+
+    if (!allowedSortFields.includes(sortBy)) {
+        throw new apiError(400, "Invalid sort field");
+    }
+
     // 4. Create match filter
     const matchStage = {
         isPublished: true
@@ -287,7 +293,10 @@ const getVideoById = asyncHandler(async (req, res) => {
     }
 
     // 3. Find video
-    const videoObject = await Video.findById(videoId);
+    const videoObject = await Video.findById(videoId).populate(
+        "owner",
+        "fullname username avatar"
+    );
 
     // 4. Check if video exists
     if (!videoObject) {
@@ -311,7 +320,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         // User must be the owner
         if (
             req.user._id.toString() !==
-            videoObject.owner.toString()
+            videoObject.owner._id.toString()
         ) {
             throw new apiError(
                 403,
@@ -320,11 +329,33 @@ const getVideoById = asyncHandler(async (req, res) => {
         }
     }
 
-    // 6. Return video details
+    // 6. Increment view count
+    await Video.findByIdAndUpdate(videoId, {
+        $inc: { views: 1 }
+    });
+
+    // 6b. Add to logged-in user's watch history (most-recent-first, deduped)
+    if (req.user) {
+        await User.findByIdAndUpdate(req.user._id, {
+            $pull: { watchHistory: videoObject._id }
+        });
+
+        await User.findByIdAndUpdate(req.user._id, {
+            $push: {
+                watchHistory: {
+                    $each: [videoObject._id],
+                    $position: 0
+                }
+            }
+        });
+    }
+
+    // 7. Return video details
     return res.status(200).json(
         new apiResponse(
             200,
             {
+                _id: videoObject._id,
                 videoFile: videoObject.videoFile,
                 videoPublicId: videoObject.videoPublicId,
                 thumbnail: videoObject.thumbnail,
@@ -332,8 +363,9 @@ const getVideoById = asyncHandler(async (req, res) => {
                 title: videoObject.title,
                 description: videoObject.description,
                 duration: videoObject.duration,
-                views: videoObject.views,
+                views: videoObject.views + 1,
                 isPublished: videoObject.isPublished,
+                createdAt: videoObject.createdAt,
                 owner: videoObject.owner
             },
             "Video received by id"

@@ -13,10 +13,6 @@ const router = Router();
 
 router.post(
     "/upload",
-    (req, res, next) => {
-        console.log("🔥 REQUEST REACHED VIDEO ROUTE");
-        next()
-    },
     verifyJWT,
     upload.fields([
         {
