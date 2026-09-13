@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import { PlayIcon } from '../components/icons'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -22,40 +23,28 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-8">
-      <div className="w-full max-w-md">
-
-        {/* Header */}
+    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center py-8">
+      <div className="w-full max-w-sm">
         <div className="mb-7 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-indigo-600/20">
-            T
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-mint text-base">
+            <PlayIcon className="h-5 w-5" />
           </div>
-
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
             Welcome back
           </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Sign in to continue to TubeSoft
-          </p>
+          <p className="mt-2 text-sm text-ink-dim">Sign in to continue to Reel</p>
         </div>
 
-        {/* Card */}
-        <div className="surface p-6 shadow-sm sm:p-8">
-
+        <div className="surface p-6">
           {error && (
-            <div className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+            <div className="mb-5 rounded-lg border border-coral/30 bg-coral-soft px-4 py-3 text-sm font-medium text-coral">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Username
-              </label>
-
+              <label className="label">Username</label>
               <input
                 type="text"
                 placeholder="Enter your username"
@@ -66,10 +55,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Email
-              </label>
-
+              <label className="label">Email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -80,10 +66,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Password
-              </label>
-
+              <label className="label">Password</label>
               <input
                 type="password"
                 placeholder="Enter your password"
@@ -93,28 +76,16 @@ export default function Login() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="btn-primary mt-2 w-full"
-            >
+            <button type="submit" className="btn-primary mt-2 w-full py-2.5">
               Sign in
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-xs font-medium text-slate-400">
-              OR
-            </span>
-            <div className="h-px flex-1 bg-slate-200" />
-          </div>
+          <div className="my-6 h-px bg-base-border" />
 
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-ink-dim">
             Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="font-semibold text-indigo-600 hover:text-indigo-700"
-            >
+            <Link to="/register" className="font-semibold text-mint hover:text-mint-dim">
               Create one
             </Link>
           </p>

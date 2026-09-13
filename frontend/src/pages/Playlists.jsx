@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getUserPlaylists, createPlaylist, deletePlaylist } from '../api/playlists'
+import { PlaylistIcon, PlusIcon, XIcon } from '../components/icons'
 
 export default function Playlists() {
   const [playlists, setPlaylists] = useState([])
@@ -33,7 +34,7 @@ export default function Playlists() {
     setCreating(true)
     try {
       const res = await createPlaylist({ name, description })
-      setPlaylists(prev => [res.data.data, ...prev])
+      setPlaylists((prev) => [res.data.data, ...prev])
       setName('')
       setDescription('')
       setShowForm(false)
@@ -49,7 +50,7 @@ export default function Playlists() {
     if (!confirm('Delete this playlist?')) return
     try {
       await deletePlaylist(playlistId)
-      setPlaylists(prev => prev.filter(p => p._id !== playlistId))
+      setPlaylists((prev) => prev.filter((p) => p._id !== playlistId))
     } catch (err) {
       alert('Failed to delete playlist')
       console.log(err)
@@ -58,22 +59,11 @@ export default function Playlists() {
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="flex items-end justify-between">
-          <div className="space-y-2">
-            <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
-            <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-200" />
-            <div className="h-4 w-72 animate-pulse rounded bg-slate-200" />
-          </div>
-          <div className="h-11 w-32 animate-pulse rounded-xl bg-slate-200" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map(item => (
-            <div
-              key={item}
-              className="h-52 animate-pulse rounded-2xl border border-slate-200 bg-white"
-            />
+      <div className="page-shell space-y-8">
+        <div className="shimmer h-8 w-48 rounded" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="shimmer h-48 rounded-xl" />
           ))}
         </div>
       </div>
@@ -82,62 +72,36 @@ export default function Playlists() {
 
   if (error) {
     return (
-      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-xl font-bold text-rose-500">
-          !
-        </div>
-        <h2 className="mt-4 text-lg font-bold text-slate-900">
-          Something went wrong
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">{error}</p>
+      <div className="surface mx-auto flex min-h-56 max-w-lg flex-col items-center justify-center text-center">
+        <h2 className="text-base font-semibold text-ink">Something went wrong</h2>
+        <p className="mt-1 text-sm text-ink-dim">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="page-shell space-y-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-            Your Library
-          </p>
-          <h1 className="page-title">Your Playlists</h1>
-          <p className="page-subtitle">
-            Organize your favorite videos into collections.
-          </p>
+          <h1 className="page-title">Your playlists</h1>
+          <p className="page-subtitle">Organize your favorite videos into collections.</p>
         </div>
 
-        <button
-          onClick={() => setShowForm(s => !s)}
-          className="btn-primary w-full sm:w-auto"
-        >
-          <span className="mr-2 text-lg leading-none">
-            {showForm ? '×' : '+'}
-          </span>
-          {showForm ? 'Cancel' : 'New Playlist'}
+        <button onClick={() => setShowForm((s) => !s)} className="btn-primary w-full sm:w-auto">
+          {showForm ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
+          {showForm ? 'Cancel' : 'New playlist'}
         </button>
       </header>
 
       {showForm && (
-        <form
-          onSubmit={handleCreate}
-          className="surface overflow-hidden"
-        >
-          <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-            <p className="text-sm font-bold text-slate-900">Create a playlist</p>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Give your collection a name and a short description.
-            </p>
+        <form onSubmit={handleCreate} className="surface overflow-hidden">
+          <div className="border-b border-base-border px-5 py-4">
+            <p className="text-sm font-semibold text-ink">Create a playlist</p>
           </div>
 
-          <div className="space-y-5 p-5 sm:p-6">
+          <div className="space-y-4 p-5">
             <div>
-              <label
-                htmlFor="playlist-name"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Playlist name
-              </label>
+              <label htmlFor="playlist-name" className="label">Playlist name</label>
               <input
                 id="playlist-name"
                 type="text"
@@ -150,37 +114,23 @@ export default function Playlists() {
             </div>
 
             <div>
-              <label
-                htmlFor="playlist-description"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Description
-              </label>
+              <label htmlFor="playlist-description" className="label">Description</label>
               <textarea
                 id="playlist-description"
                 placeholder="What kind of videos belong in this playlist?"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="textarea"
-                rows="3"
+                className="textarea min-h-24"
                 required
               />
             </div>
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="btn-secondary"
-              >
+              <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={creating}
-                className="btn-primary"
-              >
-                {creating ? 'Creating...' : 'Create Playlist'}
+              <button type="submit" disabled={creating} className="btn-primary">
+                {creating ? 'Creating...' : 'Create playlist'}
               </button>
             </div>
           </div>
@@ -188,84 +138,47 @@ export default function Playlists() {
       )}
 
       {playlists.length === 0 ? (
-        <div className="surface flex min-h-72 flex-col items-center justify-center px-6 py-14 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-2xl font-bold text-indigo-600">
-            ▤
+        <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-14 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-mint-soft text-mint">
+            <PlaylistIcon className="h-6 w-6" />
           </div>
-          <h2 className="mt-5 text-xl font-bold text-slate-900">
-            No playlists yet
-          </h2>
-          <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+          <h2 className="mt-5 text-lg font-semibold text-ink">No playlists yet</h2>
+          <p className="mt-2 max-w-md text-sm leading-6 text-ink-dim">
             Create your first playlist to organize videos you want to watch again.
           </p>
-          {!showForm && (
-            <button
-              onClick={() => setShowForm(true)}
-              className="btn-secondary mt-5"
-            >
-              Create your first playlist
-            </button>
-          )}
         </div>
       ) : (
-        <section>
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <h2 className="section-title">Collections</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {playlists.length} {playlists.length === 1 ? 'playlist' : 'playlists'}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {playlists.map((playlist) => (
-              <div
-                key={playlist._id}
-                className="group flex min-h-52 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
-              >
-                <Link
-                  to={`/playlist/${playlist._id}`}
-                  className="flex flex-1 flex-col"
-                >
-                  <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-br from-indigo-50 to-slate-50 px-5 py-4">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-lg font-bold text-indigo-600 shadow-sm ring-1 ring-indigo-100">
-                      ▤
-                    </div>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">
-                      {playlist.videos?.length || 0}{' '}
-                      {playlist.videos?.length === 1 ? 'video' : 'videos'}
-                    </span>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {playlists.map((playlist) => (
+            <div key={playlist._id} className="surface flex flex-col overflow-hidden">
+              <Link to={`/playlist/${playlist._id}`} className="flex flex-1 flex-col p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-mint-soft text-mint">
+                    <PlaylistIcon className="h-4.5 w-4.5" />
                   </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-base font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
-                      {playlist.name}
-                    </h3>
-                    <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
-                      {playlist.description}
-                    </p>
-
-                    <span className="mt-auto pt-5 text-xs font-bold text-indigo-600">
-                      Open playlist →
-                    </span>
-                  </div>
-                </Link>
-
-                <div className="border-t border-slate-100 px-5 py-3">
-                  <button
-                    onClick={() => handleDelete(playlist._id)}
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
-                  >
-                    Delete playlist
-                  </button>
+                  <span className="pill">
+                    {playlist.videos?.length || 0} {playlist.videos?.length === 1 ? 'video' : 'videos'}
+                  </span>
                 </div>
+
+                <h3 className="text-sm font-semibold text-ink transition-colors hover:text-mint">
+                  {playlist.name}
+                </h3>
+                <p className="mt-2 clamp-2 text-sm leading-6 text-ink-dim">{playlist.description}</p>
+              </Link>
+
+              <div className="border-t border-base-border px-5 py-2.5">
+                <button
+                  onClick={() => handleDelete(playlist._id)}
+                  className="text-xs font-medium text-ink-faint transition-colors hover:text-coral"
+                >
+                  Delete playlist
+                </button>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
-
 }

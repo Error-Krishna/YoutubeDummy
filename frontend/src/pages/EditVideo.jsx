@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getVideoById, updateVideo } from '../api/videos'
 import { useAuth } from '../context/AuthContext'
+import { UploadIcon, ImageIcon } from '../components/icons'
 
 export default function EditVideo() {
   const { videoId } = useParams()
@@ -57,20 +58,11 @@ export default function EditVideo() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl space-y-8">
-        <div className="space-y-2">
-          <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
-          <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-200" />
-          <div className="h-4 w-72 animate-pulse rounded bg-slate-200" />
-        </div>
-
-        <div className="surface space-y-6 p-6">
-          <div className="h-12 animate-pulse rounded-xl bg-slate-200" />
-          <div className="h-36 animate-pulse rounded-xl bg-slate-200" />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="h-40 animate-pulse rounded-2xl bg-slate-200" />
-            <div className="h-40 animate-pulse rounded-2xl bg-slate-200" />
-          </div>
+      <div className="page-shell mx-auto max-w-2xl space-y-6">
+        <div className="shimmer h-8 w-48 rounded" />
+        <div className="surface space-y-5 p-5">
+          <div className="shimmer h-11 rounded-lg" />
+          <div className="shimmer h-32 rounded-lg" />
         </div>
       </div>
     )
@@ -78,57 +70,31 @@ export default function EditVideo() {
 
   if (error) {
     return (
-      <div className="surface mx-auto flex min-h-64 max-w-2xl flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-xl font-bold text-rose-500">
-          !
-        </div>
-        <h2 className="mt-4 text-lg font-bold text-slate-900">
-          Unable to edit this video
-        </h2>
-        <p className="mt-1 max-w-md text-sm leading-6 text-slate-500">
-          {error}
-        </p>
+      <div className="surface mx-auto flex min-h-56 max-w-lg flex-col items-center justify-center px-6 text-center">
+        <h2 className="text-base font-semibold text-ink">Unable to edit this video</h2>
+        <p className="mt-1 text-sm text-ink-dim">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-          Creator Studio
-        </p>
-        <h1 className="page-title">Edit Video</h1>
-        <p className="page-subtitle">
-          Update your video's details or replace its media files.
-        </p>
+    <div className="page-shell mx-auto max-w-2xl">
+      <header className="mb-6">
+        <h1 className="page-title">Edit video</h1>
+        <p className="page-subtitle">Update your video's details or replace its media files.</p>
       </header>
 
-      <form
-        onSubmit={handleSubmit}
-        className="surface overflow-hidden"
-      >
-        <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-6">
-          <h2 className="text-base font-bold text-slate-900">
-            Video details
-          </h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Changes are applied when you save the video.
-          </p>
+      <form onSubmit={handleSubmit} className="surface overflow-hidden">
+        <div className="border-b border-base-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-ink">Video details</h2>
         </div>
 
-        <div className="space-y-6 p-5 sm:p-6">
+        <div className="space-y-5 p-5">
           <div>
-            <label
-              htmlFor="video-title"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Title
-            </label>
+            <label htmlFor="video-title" className="label">Title</label>
             <input
               id="video-title"
               type="text"
-              placeholder="Video title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="input"
@@ -136,96 +102,59 @@ export default function EditVideo() {
           </div>
 
           <div>
-            <label
-              htmlFor="video-description"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Description
-            </label>
+            <label htmlFor="video-description" className="label">Description</label>
             <textarea
               id="video-description"
-              placeholder="Video description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="textarea min-h-36"
-              rows="5"
+              className="textarea min-h-32"
             />
           </div>
 
-          <div className="border-t border-slate-100 pt-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-bold text-slate-900">
-                Replace media
-              </h3>
-              <p className="mt-1 text-xs text-slate-500">
-                Both files are optional. Leave them unchanged if you only want to edit the text.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-5 py-6 text-center transition-all hover:border-indigo-300 hover:bg-indigo-50/40">
+          <div className="border-t border-base-border pt-5">
+            <p className="mb-3 text-xs text-ink-dim">
+              Both files are optional. Leave them unchanged if you only want to edit the text.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="group relative flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-base-border bg-base px-5 py-5 text-center transition-colors hover:border-mint/50">
                 <input
                   type="file"
                   accept="video/*"
                   onChange={(e) => setVideoFile(e.target.files[0])}
                   className="sr-only"
                 />
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-lg font-bold text-indigo-600 transition-transform group-hover:scale-105">
-                  ▶
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-soft text-mint">
+                  <UploadIcon className="h-4.5 w-4.5" />
                 </div>
-
-                <span className="mt-3 text-sm font-bold text-slate-900">
+                <span className="mt-2.5 text-sm font-semibold text-ink">
                   {videoFile ? 'New video selected' : 'Replace video'}
                 </span>
-
-                <span className="mt-1 max-w-full truncate text-xs text-slate-500">
-                  {videoFile ? videoFile.name : 'Optional video file'}
+                <span className="mt-1 max-w-full truncate text-xs text-ink-faint">
+                  {videoFile ? videoFile.name : 'Optional'}
                 </span>
-
-                {!videoFile && (
-                  <span className="mt-3 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200">
-                    Browse files
-                  </span>
-                )}
               </label>
 
-              <label className="group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-5 py-6 text-center transition-all hover:border-indigo-300 hover:bg-indigo-50/40">
+              <label className="group relative flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-base-border bg-base px-5 py-5 text-center transition-colors hover:border-mint/50">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => setThumbnail(e.target.files[0])}
                   className="sr-only"
                 />
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-lg font-bold text-violet-600 transition-transform group-hover:scale-105">
-                  ▧
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-base-hover text-ink-dim">
+                  <ImageIcon className="h-4.5 w-4.5" />
                 </div>
-
-                <span className="mt-3 text-sm font-bold text-slate-900">
+                <span className="mt-2.5 text-sm font-semibold text-ink">
                   {thumbnail ? 'New thumbnail selected' : 'Replace thumbnail'}
                 </span>
-
-                <span className="mt-1 max-w-full truncate text-xs text-slate-500">
-                  {thumbnail ? thumbnail.name : 'Optional image file'}
+                <span className="mt-1 max-w-full truncate text-xs text-ink-faint">
+                  {thumbnail ? thumbnail.name : 'Optional'}
                 </span>
-
-                {!thumbnail && (
-                  <span className="mt-3 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200">
-                    Browse files
-                  </span>
-                )}
               </label>
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <p className="text-xs leading-5 text-slate-500">
-              Media replacement is optional. You can save just the title or description changes.
-            </p>
-          </div>
-
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-base-border pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={() => navigate(`/video/${videoId}`)}
@@ -233,17 +162,12 @@ export default function EditVideo() {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="btn-primary w-full sm:w-auto"
-            >
-              {saving ? 'Saving changes...' : 'Save Changes'}
+            <button type="submit" disabled={saving} className="btn-primary w-full sm:w-auto">
+              {saving ? 'Saving changes...' : 'Save changes'}
             </button>
           </div>
         </div>
       </form>
     </div>
   )
-
 }

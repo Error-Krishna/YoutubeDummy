@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getUserSubscriptions, toggleSubscription } from '../api/subscriptions'
+import { PlusIcon } from '../components/icons'
 
 export default function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([])
@@ -26,7 +27,7 @@ export default function Subscriptions() {
   const handleUnsubscribe = async (channelId) => {
     try {
       await toggleSubscription(channelId)
-      setSubscriptions(prev => prev.filter(sub => sub.channel?._id !== channelId))
+      setSubscriptions((prev) => prev.filter((sub) => sub.channel?._id !== channelId))
     } catch (err) {
       alert('Failed to unsubscribe')
       console.log(err)
@@ -35,19 +36,11 @@ export default function Subscriptions() {
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="space-y-2">
-          <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />
-          <div className="h-8 w-56 animate-pulse rounded-lg bg-slate-200" />
-          <div className="h-4 w-72 animate-pulse rounded bg-slate-200" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map(item => (
-            <div
-              key={item}
-              className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white"
-            />
+      <div className="page-shell space-y-8">
+        <div className="shimmer h-8 w-56 rounded" />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="shimmer h-24 rounded-xl" />
           ))}
         </div>
       </div>
@@ -56,88 +49,56 @@ export default function Subscriptions() {
 
   if (error) {
     return (
-      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-xl font-bold text-rose-500">
-          !
-        </div>
-        <h2 className="mt-4 text-lg font-bold text-slate-900">
-          Something went wrong
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">{error}</p>
+      <div className="surface mx-auto flex min-h-56 max-w-lg flex-col items-center justify-center text-center">
+        <h2 className="text-base font-semibold text-ink">Something went wrong</h2>
+        <p className="mt-1 text-sm text-ink-dim">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-          Your Library
-        </p>
-        <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="page-title">Your Subscriptions</h1>
-            <p className="page-subtitle">
-              Keep up with the channels you follow.
-            </p>
-          </div>
-
-          {subscriptions.length > 0 && (
-            <span className="w-fit rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-600">
-              {subscriptions.length} {subscriptions.length === 1 ? 'channel' : 'channels'}
-            </span>
-          )}
+    <div className="page-shell space-y-6">
+      <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="page-title">Your subscriptions</h1>
+          <p className="page-subtitle">Keep up with the channels you follow.</p>
         </div>
+        {subscriptions.length > 0 && (
+          <span className="pill-accent w-fit">{subscriptions.length} {subscriptions.length === 1 ? 'channel' : 'channels'}</span>
+        )}
       </header>
 
       {subscriptions.length === 0 ? (
-        <div className="surface flex min-h-72 flex-col items-center justify-center px-6 py-14 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-2xl text-indigo-600">
-            +
+        <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-14 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-mint-soft text-mint">
+            <PlusIcon className="h-6 w-6" />
           </div>
-          <h2 className="mt-5 text-xl font-bold text-slate-900">
-            No subscriptions yet
-          </h2>
-          <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+          <h2 className="mt-5 text-lg font-semibold text-ink">No subscriptions yet</h2>
+          <p className="mt-2 max-w-md text-sm leading-6 text-ink-dim">
             Subscribe to channels you enjoy and they'll appear here for quick access.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {subscriptions.map((sub) => (
-            <div
-              key={sub._id}
-              className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-            >
-              <Link
-                to={`/c/${sub.channel?.username}`}
-                className="flex min-w-0 flex-1 items-center gap-4"
-              >
-                <div className="relative shrink-0">
-                  <img
-                    src={sub.channel?.avatar}
-                    alt={sub.channel?.fullname}
-                    className="h-14 w-14 rounded-full object-cover ring-2 ring-slate-100"
-                  />
-                  <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
-                </div>
-
+            <div key={sub._id} className="surface flex items-center gap-4 p-4">
+              <Link to={`/c/${sub.channel?.username}`} className="flex min-w-0 flex-1 items-center gap-3">
+                <img
+                  src={sub.channel?.avatar}
+                  alt={sub.channel?.fullname}
+                  className="h-12 w-12 shrink-0 rounded-full object-cover"
+                />
                 <div className="min-w-0">
-                  <p className="truncate text-[15px] font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
+                  <p className="truncate text-sm font-semibold text-ink transition-colors hover:text-mint">
                     {sub.channel?.fullname}
                   </p>
-                  <p className="mt-0.5 truncate text-sm text-slate-500">
-                    @{sub.channel?.username}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-slate-400">
-                    Subscribed channel
-                  </p>
+                  <p className="mt-0.5 truncate text-xs text-ink-dim">@{sub.channel?.username}</p>
                 </div>
               </Link>
 
               <button
                 onClick={() => handleUnsubscribe(sub.channel?._id)}
-                className="shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-50"
+                className="shrink-0 rounded-full border border-base-border px-3 py-1.5 text-xs font-semibold text-ink-dim transition-colors hover:border-coral/30 hover:bg-coral-soft hover:text-coral"
               >
                 Unsubscribe
               </button>

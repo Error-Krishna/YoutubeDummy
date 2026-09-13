@@ -1,15 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
+import { PlayIcon, ImageIcon } from '../components/icons'
 
 export default function Register() {
-  const [form, setForm] = useState({
-    fullname: '',
-    email: '',
-    username: '',
-    password: ''
-  })
-
+  const [form, setForm] = useState({ fullname: '', email: '', username: '', password: '' })
   const [avatar, setAvatar] = useState(null)
   const [coverImage, setCoverImage] = useState(null)
   const [error, setError] = useState('')
@@ -17,8 +12,7 @@ export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -35,13 +29,9 @@ export default function Register() {
     fd.append('username', form.username)
     fd.append('password', form.password)
     fd.append('avatar', avatar)
-
-    if (coverImage) {
-      fd.append('coverImage', coverImage)
-    }
+    if (coverImage) fd.append('coverImage', coverImage)
 
     setSubmitting(true)
-
     try {
       await register(fd)
       navigate('/login')
@@ -54,39 +44,27 @@ export default function Register() {
 
   return (
     <div className="flex justify-center py-6 sm:py-10">
-      <div className="w-full max-w-lg">
-
-        {/* Header */}
+      <div className="w-full max-w-md">
         <div className="mb-7 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-indigo-600/20">
-            T
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-mint text-base">
+            <PlayIcon className="h-5 w-5" />
           </div>
-
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
             Create your account
           </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Join TubeSoft and start sharing your videos
-          </p>
+          <p className="mt-2 text-sm text-ink-dim">Join Reel and start sharing what you make</p>
         </div>
 
-        {/* Card */}
-        <div className="surface p-6 shadow-sm sm:p-8">
-
+        <div className="surface p-6">
           {error && (
-            <div className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+            <div className="mb-5 rounded-lg border border-coral/30 bg-coral-soft px-4 py-3 text-sm font-medium text-coral">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Full name
-              </label>
-
+              <label className="label">Full name</label>
               <input
                 name="fullname"
                 placeholder="Your full name"
@@ -98,10 +76,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Email
-              </label>
-
+              <label className="label">Email</label>
               <input
                 name="email"
                 type="email"
@@ -114,10 +89,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Username
-              </label>
-
+              <label className="label">Username</label>
               <input
                 name="username"
                 placeholder="Choose a username"
@@ -129,10 +101,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Password
-              </label>
-
+              <label className="label">Password</label>
               <input
                 name="password"
                 type="password"
@@ -144,27 +113,20 @@ export default function Register() {
               />
             </div>
 
-            {/* Avatar */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Profile picture
-                <span className="ml-1 text-red-500">*</span>
+              <label className="label">
+                Profile picture <span className="text-coral">*</span>
               </label>
-
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
-                  +
+              <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-base-border bg-base px-4 py-3 transition-colors hover:border-mint/50">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-base-hover text-ink-dim">
+                  <ImageIcon className="h-4.5 w-4.5" />
                 </span>
-
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-slate-700">
+                  <span className="block truncate text-sm font-medium text-ink">
                     {avatar ? avatar.name : 'Choose profile picture'}
                   </span>
-                  <span className="block text-xs text-slate-400">
-                    JPG, PNG or other image
-                  </span>
+                  <span className="block text-xs text-ink-faint">JPG, PNG or other image</span>
                 </span>
-
                 <input
                   type="file"
                   accept="image/*"
@@ -175,29 +137,20 @@ export default function Register() {
               </label>
             </div>
 
-            {/* Cover image */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                Cover image
-                <span className="ml-1 font-normal text-slate-400">
-                  (optional)
-                </span>
+              <label className="label">
+                Cover image <span className="font-normal normal-case text-ink-faint">(optional)</span>
               </label>
-
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 transition-colors hover:border-indigo-400 hover:bg-indigo-50/50">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-lg shadow-sm ring-1 ring-slate-200">
-                  +
+              <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-base-border bg-base px-4 py-3 transition-colors hover:border-mint/50">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-base-hover text-ink-dim">
+                  <ImageIcon className="h-4.5 w-4.5" />
                 </span>
-
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-slate-700">
+                  <span className="block truncate text-sm font-medium text-ink">
                     {coverImage ? coverImage.name : 'Choose cover image'}
                   </span>
-                  <span className="block text-xs text-slate-400">
-                    Optional channel banner
-                  </span>
+                  <span className="block text-xs text-ink-faint">Optional channel banner</span>
                 </span>
-
                 <input
                   type="file"
                   accept="image/*"
@@ -207,23 +160,16 @@ export default function Register() {
               </label>
             </div>
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="btn-primary w-full"
-            >
+            <button type="submit" disabled={submitting} className="btn-primary w-full py-2.5">
               {submitting ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
-          <div className="my-6 h-px bg-slate-200" />
+          <div className="my-6 h-px bg-base-border" />
 
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-ink-dim">
             Already have an account?{' '}
-            <Link
-              to="/login"
-              className="font-semibold text-indigo-600 hover:text-indigo-700"
-            >
+            <Link to="/login" className="font-semibold text-mint hover:text-mint-dim">
               Sign in
             </Link>
           </p>

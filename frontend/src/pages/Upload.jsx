@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { uploadVideo } from '../api/videos'
+import { UploadIcon, ImageIcon } from '../components/icons'
 
 export default function Upload() {
   const [title, setTitle] = useState('')
@@ -30,38 +31,20 @@ export default function Upload() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-          Creator Studio
-        </p>
-        <h1 className="page-title">Upload Video</h1>
-        <p className="page-subtitle">
-          Share your next video with your audience.
-        </p>
+    <div className="page-shell mx-auto max-w-2xl">
+      <header className="mb-6">
+        <h1 className="page-title">Upload video</h1>
+        <p className="page-subtitle">Share your next video with your audience.</p>
       </header>
 
-      <form
-        onSubmit={handleSubmit}
-        className="surface overflow-hidden"
-      >
-        <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-6">
-          <h2 className="text-base font-bold text-slate-900">
-            Video details
-          </h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Add the information viewers will see when they discover your video.
-          </p>
+      <form onSubmit={handleSubmit} className="surface overflow-hidden">
+        <div className="border-b border-base-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-ink">Video details</h2>
         </div>
 
-        <div className="space-y-6 p-5 sm:p-6">
+        <div className="space-y-5 p-5">
           <div>
-            <label
-              htmlFor="video-title"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Title
-            </label>
+            <label htmlFor="video-title" className="label">Title</label>
             <input
               id="video-title"
               type="text"
@@ -74,35 +57,20 @@ export default function Upload() {
           </div>
 
           <div>
-            <label
-              htmlFor="video-description"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Description
-            </label>
+            <label htmlFor="video-description" className="label">Description</label>
             <textarea
               id="video-description"
               placeholder="Tell viewers what your video is about..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="textarea min-h-36"
-              rows="5"
+              className="textarea min-h-32"
               required
             />
           </div>
 
-          <div className="border-t border-slate-100 pt-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-bold text-slate-900">
-                Media files
-              </h3>
-              <p className="mt-1 text-xs text-slate-500">
-                Choose the video and thumbnail you want to publish.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-5 py-6 text-center transition-all hover:border-indigo-300 hover:bg-indigo-50/40">
+          <div className="border-t border-base-border pt-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="group relative flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-base-border bg-base px-5 py-6 text-center transition-colors hover:border-mint/50">
                 <input
                   type="file"
                   accept="video/*"
@@ -110,27 +78,18 @@ export default function Upload() {
                   className="sr-only"
                   required
                 />
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-lg font-bold text-indigo-600 transition-transform group-hover:scale-105">
-                  ▶
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-mint-soft text-mint">
+                  <UploadIcon className="h-5 w-5" />
                 </div>
-
-                <span className="mt-3 text-sm font-bold text-slate-900">
+                <span className="mt-3 text-sm font-semibold text-ink">
                   {videoFile ? 'Video selected' : 'Choose video'}
                 </span>
-
-                <span className="mt-1 max-w-full truncate text-xs text-slate-500">
+                <span className="mt-1 max-w-full truncate text-xs text-ink-faint">
                   {videoFile ? videoFile.name : 'MP4, WebM or other video file'}
                 </span>
-
-                {!videoFile && (
-                  <span className="mt-3 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200">
-                    Browse files
-                  </span>
-                )}
               </label>
 
-              <label className="group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-5 py-6 text-center transition-all hover:border-indigo-300 hover:bg-indigo-50/40">
+              <label className="group relative flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-base-border bg-base px-5 py-6 text-center transition-colors hover:border-mint/50">
                 <input
                   type="file"
                   accept="image/*"
@@ -138,46 +97,26 @@ export default function Upload() {
                   className="sr-only"
                   required
                 />
-
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-lg font-bold text-violet-600 transition-transform group-hover:scale-105">
-                  ▧
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-base-hover text-ink-dim">
+                  <ImageIcon className="h-5 w-5" />
                 </div>
-
-                <span className="mt-3 text-sm font-bold text-slate-900">
+                <span className="mt-3 text-sm font-semibold text-ink">
                   {thumbnail ? 'Thumbnail selected' : 'Choose thumbnail'}
                 </span>
-
-                <span className="mt-1 max-w-full truncate text-xs text-slate-500">
+                <span className="mt-1 max-w-full truncate text-xs text-ink-faint">
                   {thumbnail ? thumbnail.name : 'JPG, PNG or other image file'}
                 </span>
-
-                {!thumbnail && (
-                  <span className="mt-3 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200">
-                    Browse files
-                  </span>
-                )}
               </label>
             </div>
           </div>
 
-          <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3">
-            <p className="text-xs leading-5 text-indigo-700">
-              Your video and thumbnail are required before you can publish.
-            </p>
-          </div>
-
-          <div className="border-t border-slate-100 pt-5">
-            <button
-              type="submit"
-              disabled={uploading}
-              className="btn-primary w-full py-3"
-            >
-              {uploading ? 'Uploading video...' : 'Publish Video'}
+          <div className="border-t border-base-border pt-5">
+            <button type="submit" disabled={uploading} className="btn-primary w-full py-2.5">
+              {uploading ? 'Uploading video...' : 'Publish video'}
             </button>
           </div>
         </div>
       </form>
     </div>
   )
-
 }

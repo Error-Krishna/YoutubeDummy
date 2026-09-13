@@ -4,8 +4,9 @@ import {
   getPlaylistById,
   removeVideoFromPlaylist,
   updatePlaylist,
-  deletePlaylist
+  deletePlaylist,
 } from '../api/playlists'
+import { PlaylistIcon } from '../components/icons'
 
 export default function PlaylistDetails() {
   const { playlistId } = useParams()
@@ -38,8 +39,11 @@ export default function PlaylistDetails() {
 
   const handleRemoveVideo = async (videoId) => {
     try {
-      const res = await removeVideoFromPlaylist(playlistId, videoId)
-      setPlaylist(res.data.data)
+      // The remove endpoint returns the raw playlist doc with an
+      // unpopulated `videos` array (just ids), so refetch the fully
+      // populated playlist instead of using the mutation response directly.
+      await removeVideoFromPlaylist(playlistId, videoId)
+      await fetchPlaylist()
     } catch (err) {
       alert('Failed to remove video')
       console.log(err)
@@ -50,8 +54,16 @@ export default function PlaylistDetails() {
     e.preventDefault()
     setSaving(true)
     try {
+      // The update endpoint returns the raw playlist doc with an
+      // unpopulated `videos` array (just ids), so only merge the fields
+      // that actually changed (name/description) instead of overwriting
+      // the whole playlist with the mutation response.
       const res = await updatePlaylist(playlistId, { name, description })
-      setPlaylist(res.data.data)
+      setPlaylist((prev) => ({
+        ...prev,
+        name: res.data.data.name,
+        description: res.data.data.description,
+      }))
       setEditing(false)
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update playlist')
@@ -74,72 +86,37 @@ export default function PlaylistDetails() {
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="h-56 animate-pulse rounded-3xl border border-slate-200 bg-white" />
+      <div className="page-shell space-y-6">
+        <div className="shimmer h-44 rounded-xl" />
         <div className="space-y-3">
-          {[1, 2, 3].map(item => (
-            <div
-              key={item}
-              className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white"
-            />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="shimmer h-24 rounded-xl" />
           ))}
         </div>
       </div>
     )
   }
 
-  if (error) {
+  if (error || !playlist) {
     return (
-      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-xl font-bold text-rose-500">
-          !
-        </div>
-        <h2 className="mt-4 text-lg font-bold text-slate-900">
-          Unable to load playlist
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">{error}</p>
-      </div>
-    )
-  }
-
-  if (!playlist) {
-    return (
-      <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-xl font-bold text-slate-500">
-          ?
-        </div>
-        <h2 className="mt-4 text-lg font-bold text-slate-900">
-          Playlist not found
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          This playlist may have been removed or is no longer available.
-        </p>
+      <div className="surface mx-auto flex min-h-56 max-w-lg flex-col items-center justify-center text-center">
+        <h2 className="text-base font-semibold text-ink">Unable to load playlist</h2>
+        <p className="mt-1 text-sm text-ink-dim">{error || 'This playlist may have been removed.'}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="page-shell space-y-6">
       {editing ? (
-        <form
-          onSubmit={handleSaveEdit}
-          className="surface overflow-hidden"
-        >
-          <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-            <p className="text-sm font-bold text-slate-900">Edit playlist</p>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Update the name and description of your collection.
-            </p>
+        <form onSubmit={handleSaveEdit} className="surface overflow-hidden">
+          <div className="border-b border-base-border px-5 py-4">
+            <p className="text-sm font-semibold text-ink">Edit playlist</p>
           </div>
 
-          <div className="space-y-5 p-5 sm:p-6">
+          <div className="space-y-4 p-5">
             <div>
-              <label
-                htmlFor="playlist-name"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Playlist name
-              </label>
+              <label htmlFor="playlist-name" className="label">Playlist name</label>
               <input
                 id="playlist-name"
                 type="text"
@@ -151,135 +128,86 @@ export default function PlaylistDetails() {
             </div>
 
             <div>
-              <label
-                htmlFor="playlist-description"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Description
-              </label>
+              <label htmlFor="playlist-description" className="label">Description</label>
               <textarea
                 id="playlist-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="textarea"
-                rows="4"
                 required
               />
             </div>
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={() => setEditing(false)}
-                className="btn-secondary"
-              >
+              <button type="button" onClick={() => setEditing(false)} className="btn-secondary">
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={saving}
-                className="btn-primary"
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
+              <button type="submit" disabled={saving} className="btn-primary">
+                {saving ? 'Saving...' : 'Save changes'}
               </button>
             </div>
           </div>
         </form>
       ) : (
-        <header className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <div className="bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 px-6 py-8 text-white sm:px-8 sm:py-10">
+        <header className="surface overflow-hidden">
+          <div className="px-6 py-8 sm:px-8">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div className="min-w-0">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-xl font-bold ring-1 ring-white/20">
-                  ▤
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-mint-soft text-mint">
+                  <PlaylistIcon className="h-5 w-5" />
                 </div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-100">
-                  Playlist
-                </p>
-                <h1 className="mt-2 break-words text-2xl font-extrabold tracking-tight sm:text-3xl">
+                <h1 className="break-words font-display text-2xl font-semibold tracking-tight text-ink">
                   {playlist.name}
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-indigo-100 sm:text-base">
-                  {playlist.description}
-                </p>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-dim">{playlist.description}</p>
               </div>
 
               <div className="flex shrink-0 gap-2">
-                <button
-                  onClick={() => setEditing(true)}
-                  className="rounded-xl bg-white/15 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/25"
-                >
+                <button onClick={() => setEditing(true)} className="btn-secondary">
                   Edit
                 </button>
-                <button
-                  onClick={handleDeletePlaylist}
-                  className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-rose-600 shadow-sm transition-colors hover:bg-rose-50"
-                >
+                <button onClick={handleDeletePlaylist} className="btn-danger">
                   Delete
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 px-6 py-4 text-sm sm:px-8">
-            <span className="font-semibold text-slate-900">
-              {playlist.videos?.length || 0}{' '}
-              {playlist.videos?.length === 1 ? 'video' : 'videos'}
-            </span>
-            <span className="text-slate-400">
-              Curated collection
-            </span>
+          <div className="border-t border-base-border px-6 py-3 text-sm text-ink-dim sm:px-8">
+            {playlist.videos?.length || 0} {playlist.videos?.length === 1 ? 'video' : 'videos'}
           </div>
         </header>
       )}
 
       <section>
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="section-title">Videos</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Videos saved in this playlist.
-            </p>
-          </div>
-          {playlist.videos?.length > 0 && (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-              {playlist.videos.length}
-            </span>
-          )}
+        <div className="mb-4 flex items-end justify-between border-b border-base-border pb-3">
+          <h2 className="section-title">Videos</h2>
         </div>
 
-        {(!playlist.videos || playlist.videos.length === 0) ? (
-          <div className="surface flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-xl font-bold text-indigo-600">
-              ▶
-            </div>
-            <h3 className="mt-4 text-lg font-bold text-slate-900">
-              This playlist is empty
-            </h3>
-            <p className="mt-1 max-w-sm text-sm leading-6 text-slate-500">
+        {!playlist.videos || playlist.videos.length === 0 ? (
+          <div className="surface flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center">
+            <h3 className="text-base font-semibold text-ink">This playlist is empty</h3>
+            <p className="mt-1 max-w-sm text-sm text-ink-dim">
               Add videos to this playlist and they'll appear here.
             </p>
           </div>
         ) : (
           <div className="space-y-3">
             {playlist.videos.map((video, index) => (
-              <div
-                key={video._id}
-                className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md sm:gap-4 sm:p-4"
-              >
-                <span className="hidden w-6 shrink-0 text-center text-xs font-bold text-slate-300 sm:block">
+              <div key={video._id} className="surface flex items-center gap-3 p-3 sm:gap-4 sm:p-4">
+                <span className="hidden w-6 shrink-0 text-center text-xs font-semibold text-ink-faint sm:block">
                   {String(index + 1).padStart(2, '0')}
                 </span>
 
                 <Link
                   to={`/video/${video._id}`}
-                  className="relative w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:w-40"
+                  className="relative w-28 shrink-0 overflow-hidden rounded-lg bg-base-hover sm:w-40"
                 >
                   <div className="aspect-video">
                     <img
                       src={video.thumbnail}
                       alt={video.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                     />
                   </div>
                 </Link>
@@ -287,21 +215,17 @@ export default function PlaylistDetails() {
                 <div className="min-w-0 flex-1">
                   <Link
                     to={`/video/${video._id}`}
-                    className="line-clamp-2 text-sm font-bold leading-5 text-slate-900 transition-colors hover:text-indigo-600 sm:text-base"
+                    className="clamp-2 text-sm font-semibold leading-5 text-ink hover:text-mint sm:text-base"
                   >
                     {video.title}
                   </Link>
-                  <p className="mt-1 hidden line-clamp-1 text-sm text-slate-500 sm:block">
-                    {video.description}
-                  </p>
-                  <p className="mt-1.5 text-xs font-medium text-slate-400">
-                    {video.views} views
-                  </p>
+                  <p className="mt-1 hidden clamp-2 text-sm text-ink-dim sm:block">{video.description}</p>
+                  <p className="mt-1.5 text-xs text-ink-faint">{video.views} views</p>
                 </div>
 
                 <button
                   onClick={() => handleRemoveVideo(video._id)}
-                  className="shrink-0 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+                  className="shrink-0 rounded-full border border-base-border px-3 py-1.5 text-xs font-semibold text-ink-dim transition-colors hover:border-coral/30 hover:bg-coral-soft hover:text-coral"
                 >
                   Remove
                 </button>
@@ -312,5 +236,4 @@ export default function PlaylistDetails() {
       </section>
     </div>
   )
-
 }

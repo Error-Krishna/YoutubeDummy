@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 
 
 // ✅ Done
-// Get all tweets of current user
+// Get all tweets of current user, with like count and whether the
+// current user has liked each one.
 const getUserTweets = asyncHandler(async (req, res) => {
 
     // 1. Authentication
@@ -16,12 +17,47 @@ const getUserTweets = asyncHandler(async (req, res) => {
         throw new apiError(401, "Unauthorized user");
     }
 
-    // 2. Find user's tweets
-    const tweets = await Tweets.find({
-        owner: user._id
-    }).sort({
-        createdAt: -1
-    });
+    // 2. Find user's tweets, joining in like data so the frontend gets
+    // a correct, persistent like status on first load instead of only
+    // tracking likes in local session state.
+    const tweets = await Tweets.aggregate([
+        {
+            $match: {
+                owner: user._id
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "tweet",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                likesCount: {
+                    $size: "$likes"
+                },
+                isLiked: {
+                    $in: [
+                        user._id,
+                        "$likes.likedBy"
+                    ]
+                }
+            }
+        },
+        {
+            $project: {
+                likes: 0
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ]);
 
     // 3. Return response
     return res.status(200).json(

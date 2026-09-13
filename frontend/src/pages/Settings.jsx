@@ -58,54 +58,32 @@ export default function Settings() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="page-shell mx-auto max-w-2xl space-y-8">
       <header>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-          Account
-        </p>
         <h1 className="page-title">Settings</h1>
-        <p className="page-subtitle">
-          Manage your account information and security preferences.
-        </p>
+        <p className="page-subtitle">Manage your account information and security preferences.</p>
       </header>
 
       <section className="surface overflow-hidden">
-        <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600">
-              @
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Account Details
-              </h2>
-              <p className="text-xs text-slate-500">
-                Update your personal account information.
-              </p>
-            </div>
-          </div>
+        <div className="border-b border-base-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-ink">Account details</h2>
+          <p className="mt-0.5 text-xs text-ink-dim">Update your personal account information.</p>
         </div>
 
-        <form onSubmit={handleAccountSubmit} className="space-y-5 p-5 sm:p-6">
+        <form onSubmit={handleAccountSubmit} className="space-y-4 p-5">
           {accountError && (
-            <div className="rounded-xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">
+            <div className="rounded-lg border border-coral/30 bg-coral-soft px-4 py-3 text-sm text-coral">
               {accountError}
             </div>
           )}
-
           {accountMessage && (
-            <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-600">
+            <div className="rounded-lg border border-mint/30 bg-mint-soft px-4 py-3 text-sm text-mint">
               {accountMessage}
             </div>
           )}
 
           <div>
-            <label
-              htmlFor="fullname"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Full Name
-            </label>
+            <label htmlFor="fullname" className="label">Full name</label>
             <input
               id="fullname"
               type="text"
@@ -116,12 +94,7 @@ export default function Settings() {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Email Address
-            </label>
+            <label htmlFor="email" className="label">Email address</label>
             <input
               id="email"
               type="email"
@@ -131,55 +104,34 @@ export default function Settings() {
             />
           </div>
 
-          <div className="flex justify-end border-t border-slate-100 pt-5">
-            <button
-              type="submit"
-              disabled={accountSaving}
-              className="btn-primary w-full sm:w-auto"
-            >
-              {accountSaving ? 'Saving...' : 'Save Changes'}
+          <div className="flex justify-end border-t border-base-border pt-4">
+            <button type="submit" disabled={accountSaving} className="btn-primary w-full sm:w-auto">
+              {accountSaving ? 'Saving...' : 'Save changes'}
             </button>
           </div>
         </form>
       </section>
 
       <section className="surface overflow-hidden">
-        <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-sm font-bold text-violet-600">
-              •••
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Change Password
-              </h2>
-              <p className="text-xs text-slate-500">
-                Keep your account secure with a strong password.
-              </p>
-            </div>
-          </div>
+        <div className="border-b border-base-border px-5 py-4">
+          <h2 className="text-sm font-semibold text-ink">Change password</h2>
+          <p className="mt-0.5 text-xs text-ink-dim">Keep your account secure with a strong password.</p>
         </div>
 
-        <form onSubmit={handlePasswordSubmit} className="space-y-5 p-5 sm:p-6">
+        <form onSubmit={handlePasswordSubmit} className="space-y-4 p-5">
           {passwordError && (
-            <div className="rounded-xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">
+            <div className="rounded-lg border border-coral/30 bg-coral-soft px-4 py-3 text-sm text-coral">
               {passwordError}
             </div>
           )}
-
           {passwordMessage && (
-            <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-600">
+            <div className="rounded-lg border border-mint/30 bg-mint-soft px-4 py-3 text-sm text-mint">
               {passwordMessage}
             </div>
           )}
 
           <div>
-            <label
-              htmlFor="old-password"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Current Password
-            </label>
+            <label htmlFor="old-password" className="label">Current password</label>
             <input
               id="old-password"
               type="password"
@@ -192,12 +144,7 @@ export default function Settings() {
           </div>
 
           <div>
-            <label
-              htmlFor="new-password"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              New Password
-            </label>
+            <label htmlFor="new-password" className="label">New password</label>
             <input
               id="new-password"
               type="password"
@@ -210,12 +157,7 @@ export default function Settings() {
           </div>
 
           <div>
-            <label
-              htmlFor="confirm-password"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              Confirm New Password
-            </label>
+            <label htmlFor="confirm-password" className="label">Confirm new password</label>
             <input
               id="confirm-password"
               type="password"
@@ -227,18 +169,13 @@ export default function Settings() {
             />
           </div>
 
-          <div className="flex justify-end border-t border-slate-100 pt-5">
-            <button
-              type="submit"
-              disabled={passwordSaving}
-              className="btn-primary w-full sm:w-auto"
-            >
-              {passwordSaving ? 'Updating...' : 'Change Password'}
+          <div className="flex justify-end border-t border-base-border pt-4">
+            <button type="submit" disabled={passwordSaving} className="btn-primary w-full sm:w-auto">
+              {passwordSaving ? 'Updating...' : 'Change password'}
             </button>
           </div>
         </form>
       </section>
     </div>
   )
-
 }
